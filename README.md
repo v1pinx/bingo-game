@@ -16,7 +16,7 @@ You can check out the game live at: {loading...}
 
 ## How to Play
 
-1.  **Access the Game:** Open the game at http://your-deployed-url.
+1.  **Access the Game:** Open the game at {loading...}.
 2.  **Login:** Enter your username to start.
 3.  **Invite Friends:** Once logged in, you can invite friends by entering their usernames.
 4.  **Play:** Click on numbers on your grid to make your moves. Aim to form lines of 5 crossed numbers.
@@ -35,8 +35,8 @@ You can check out the game live at: {loading...}
     
     Copy code
     
-    `git clone https://github.com/yourusername/5x5-grid-game.git
-    cd 5x5-grid-game` 
+    `git clone https://github.com/v1pinx/bingo-game.git
+    cd bingo-game` 
     
 2.  **Install Dependencies:**
     
