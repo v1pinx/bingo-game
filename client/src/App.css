@@ -1,0 +1,106 @@
+/* App.css */
+
+/* General Styles */
+body {
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+    background-color: #ffe066;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+  
+  #login, #invite, #controls, #message {
+    margin-bottom: 20px;
+  }
+  
+  input[type="text"], input[type="number"] {
+    padding: 10px;
+    margin-right: 10px;
+    border: 2px solid #ff6b6b;
+    border-radius: 15px;
+    font-size: 16px;
+    box-shadow: 3px 3px 0 #333;
+    background-color: #fff1e6;
+    transition: transform 0.2s;
+  }
+  
+  input[type="text"]:focus, input[type="number"]:focus {
+    transform: scale(1.05);
+  }
+  
+  button {
+    padding: 10px 15px;
+    background-color: #ff6b6b;
+    color: white;
+    border: 2px solid #333;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 3px 3px 0 #333;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  
+  button:hover {
+    background-color: #ff4757;
+    transform: scale(1.05);
+  }
+  
+  /* Game Layout */
+  #game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  h2 {
+    margin-bottom: 15px;
+    color: #333;
+    text-shadow: 2px 2px 0 #ff6b6b;
+  }
+  
+  /* Matrix Styles */
+  .matrix-row {
+    display: flex;
+  }
+  
+  .matrix-cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid #ff6b6b;
+    border-radius: 10px;
+    margin: 2px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #f0e5d8;
+    color: #ff6b6b;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 3px 3px 0 #333;
+  }
+  
+  .matrix-cell:hover {
+    background-color: #ffe066;
+    transform: translateY(-5px);
+  }
+  
+  .matrix-cell.crossed {
+    background-color: #ff6b6b;
+    color: white;
+  }
+  
+  /* Message Styles */
+  #message {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff4757;
+    margin-top: 10px;
+    text-shadow: 2px 2px 0 #333;
+  }
+  
