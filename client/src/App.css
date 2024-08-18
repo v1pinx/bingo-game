@@ -1,106 +1,184 @@
-/* App.css */
-
-/* General Styles */
+/* General body styling */
 body {
-    font-family: 'Comic Sans MS', 'Comic Sans', cursive;
-    background-color: #ffe066;
+    font-family: 'Orbitron', sans-serif;
+    background-color: #0f0f0f;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
-    padding: 0;
+    overflow: hidden;
   }
   
-  #login, #invite, #controls, #message {
-    margin-bottom: 20px;
+  /* App container */
+  .app {
+    text-align: center;
   }
   
-  input[type="text"], input[type="number"] {
+  /* Login section */
+  #login {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+  
+  #login h1 {
+    font-size: 2em;
+    color: #0ff;
+  }
+  
+  #login input {
+    width: 300px;
     padding: 10px;
-    margin-right: 10px;
-    border: 2px solid #ff6b6b;
-    border-radius: 15px;
-    font-size: 16px;
-    box-shadow: 3px 3px 0 #333;
-    background-color: #fff1e6;
-    transition: transform 0.2s;
+    border: 2px solid #0ff;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+    font-size: 1em;
   }
   
-  input[type="text"]:focus, input[type="number"]:focus {
-    transform: scale(1.05);
-  }
-  
-  button {
-    padding: 10px 15px;
-    background-color: #ff6b6b;
-    color: white;
-    border: 2px solid #333;
-    border-radius: 15px;
+  #login button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #0ff;
+    color: #0f0f0f;
+    font-size: 1em;
     cursor: pointer;
-    font-size: 16px;
-    box-shadow: 3px 3px 0 #333;
-    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    transition: background 0.3s ease;
   }
   
-  button:hover {
-    background-color: #ff4757;
-    transform: scale(1.05);
+  #login button:hover {
+    background: #0dd;
   }
   
-  /* Game Layout */
+  /* Invite section */
+  #invite {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+  
+  #invite h2 {
+    font-size: 1.5em;
+    color: #0ff;
+  }
+  
+  #invite input {
+    width: 300px;
+    padding: 10px;
+    border: 2px solid #0ff;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+    font-size: 1em;
+  }
+  
+  #invite button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #0ff;
+    color: #0f0f0f;
+    font-size: 1em;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    transition: background 0.3s ease;
+  }
+  
+  #invite button:hover {
+    background: #0dd;
+  }
+  
+  /* Game section */
   #game {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+  
+  #game h2 {
+    font-size: 2em;
+    color: #0ff;
+  }
+  
+  #game p {
+    font-size: 1.2em;
+    color: #0ff;
+  }
+  
+  #matrix {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
   }
   
-  h2 {
-    margin-bottom: 15px;
-    color: #333;
-    text-shadow: 2px 2px 0 #ff6b6b;
-  }
-  
-  /* Matrix Styles */
   .matrix-row {
     display: flex;
   }
   
   .matrix-cell {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    border: 3px solid #ff6b6b;
-    border-radius: 10px;
-    margin: 2px;
-    font-size: 20px;
-    font-weight: bold;
+    justify-content: center;
+    border: 2px solid #0ff;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #0ff;
+    font-size: 1.5em;
     cursor: pointer;
-    background-color: #f0e5d8;
-    color: #ff6b6b;
-    transition: background-color 0.3s, transform 0.3s;
-    box-shadow: 3px 3px 0 #333;
-  }
-  
-  .matrix-cell:hover {
-    background-color: #ffe066;
-    transform: translateY(-5px);
+    transition: background 0.3s ease, transform 0.3s ease;
   }
   
   .matrix-cell.crossed {
-    background-color: #ff6b6b;
-    color: white;
+    background: rgba(255, 0, 0, 0.5);
+    color: #f00;
   }
   
-  /* Message Styles */
+  .matrix-cell:hover {
+    background: rgba(0, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+  
+  /* Controls section */
+  #controls {
+    margin: 20px;
+  }
+  
+  #resetButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #ff0;
+    color: #0f0f0f;
+    font-size: 1em;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+    transition: background 0.3s ease;
+  }
+  
+  #resetButton:hover {
+    background: #dd0;
+  }
+  
+  /* Message section */
   #message {
-    font-size: 20px;
-    font-weight: bold;
-    color: #ff4757;
-    margin-top: 10px;
-    text-shadow: 2px 2px 0 #333;
+    margin: 20px;
+    font-size: 1.2em;
+    color: #ff0;
+    text-shadow: 0 0 10px rgba(255, 255, 0, 0.7);
   }
   

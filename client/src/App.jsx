@@ -3,15 +3,15 @@ import { io } from 'socket.io-client';
 import './App.css';
 
 function App() {
-  const [playerId, setPlayerId] = useState('');
+  const [username, setUsername] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [inviteeId, setInviteeId] = useState('');
+  const [inviteeUsername, setInviteeUsername] = useState('');
   const [socket, setSocket] = useState(null);
   const [currentPlayer, setCurrentPlayer] = useState('');
   const [gameId, setGameId] = useState('');
   const [matrix, setMatrix] = useState([[], []]);
   const [message, setMessage] = useState('');
-  const [inputNumber, setInputNumber] = useState('');
+  const [showReset, setShowReset] = useState(false);
 
   useEffect(() => {
     const newSocket = io('http://localhost:3000');
@@ -25,23 +25,29 @@ function App() {
       setGameId(data.gameId);
       setCurrentPlayer(data.playerId);
       setMatrix(data.matrix);
-      setMessage('Game started');
+      setMessage('Game started!');
+      setShowReset(true);
     });
 
     newSocket.on('updateMatrix', (data) => {
       setMatrix(data.matrix);
       setCurrentPlayer(data.currentPlayer);
-      setMessage(`Player ${data.currentPlayer}'s turn`);
+      setMessage(`It's ${data.currentPlayer}'s turn!`);
     });
 
     newSocket.on('gameOver', (msg) => {
       setMessage(msg);
-      document.getElementById('submitNumber').disabled = true;
+      setShowReset(true);
     });
 
     newSocket.on('turnChange', (playerId) => {
       setCurrentPlayer(playerId);
-      setMessage(`Player ${playerId}'s turn`);
+      setMessage(`It's ${playerId}'s turn!`);
+    });
+
+    newSocket.on('opponentLeft', (msg) => {
+      setMessage(msg);
+      setShowReset(true);
     });
 
     return () => {
@@ -51,39 +57,32 @@ function App() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (playerId) {
-      socket.emit('login', playerId);
+    if (username) {
+      socket.emit('login', username);
     }
   };
 
   const handleInvite = (e) => {
     e.preventDefault();
-    if (inviteeId) {
-      socket.emit('invite', inviteeId);
+    if (inviteeUsername && inviteeUsername !== username) {
+      socket.emit('invite', inviteeUsername);
+    } else {
+      setMessage('You cannot invite yourself!');
     }
   };
 
   const handleNumberClick = (rowIndex, colIndex) => {
     const selectedNumber = matrix[rowIndex][colIndex];
-    if (playerId === currentPlayer && selectedNumber !== 'X') {
+    if (username === currentPlayer && selectedNumber !== 'X') {
       socket.emit('numberSelected', { gameId, number: selectedNumber });
     }
   };
 
-  const handleSubmitNumber = () => {
-    const number = parseInt(inputNumber);
-    if (number < 1 || number > 25) {
-      alert('Please enter a valid number between 1 and 25.');
-      return;
-    }
-
-    if (playerId === currentPlayer) {
-      socket.emit('numberSelected', { gameId, number });
-    } else {
-      alert("It's not your turn!");
-    }
-
-    setInputNumber('');
+  const handleReset = () => {
+    setMatrix([[], []]);
+    setShowReset(false);
+    setMessage('');
+    setInviteeUsername('');
   };
 
   const renderMatrix = (matrix) => {
@@ -103,50 +102,55 @@ function App() {
   };
 
   return (
-    <>
+    <div className="app">
       {!isLoggedIn ? (
         <div id="login">
+          <h1>Welcome to the 5x5 Grid Game</h1>
           <input
             type="text"
-            placeholder="Enter your unique ID"
-            value={playerId}
-            onChange={(e) => setPlayerId(e.target.value)}
+            placeholder="Enter your username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <button id="loginButton" onClick={handleLogin}>
             Login
           </button>
         </div>
       ) : (
-        <div id="invite">
-          <input
-            type="text"
-            placeholder="Enter player ID to invite"
-            value={inviteeId}
-            onChange={(e) => setInviteeId(e.target.value.trim())}
-          />
-          <button id="inviteButton" onClick={handleInvite}>
-            Invite
-          </button>
-        </div>
+        <>
+          {!showReset && (
+            <div id="invite">
+              <h2>Invite a Friend to Play</h2>
+              <input
+                type="text"
+                placeholder="Enter friend's username"
+                value={inviteeUsername}
+                onChange={(e) => setInviteeUsername(e.target.value.trim())}
+              />
+              <button id="inviteButton" onClick={handleInvite}>
+                Invite
+              </button>
+            </div>
+          )}
+
+          <div id="game">
+            <h2>Your Game Board</h2>
+            <p>Click on a number to make your move</p>
+            <div id="matrix">{renderMatrix(matrix)}</div>
+          </div>
+
+          {showReset && (
+            <div id="controls">
+              <button id="resetButton" onClick={handleReset}>
+                Reset
+              </button>
+            </div>
+          )}
+
+          <div id="message">{message}</div>
+        </>
       )}
-      <div id="game">
-        <h2>Your Matrix</h2>
-        <div id="matrix">{renderMatrix(matrix)}</div>
-      </div>
-      <div id="controls">
-        <input
-          type="number"
-          id="numberInput"
-          value={inputNumber}
-          onChange={(e) => setInputNumber(e.target.value)}
-          placeholder="Enter a number (1-25)"
-        />
-        <button id="submitNumber" onClick={handleSubmitNumber}>
-          Submit
-        </button>
-      </div>
-      <div id="message">{message}</div>
-    </>
+    </div>
   );
 }
 
