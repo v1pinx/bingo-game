@@ -13,8 +13,10 @@ function App() {
   const [message, setMessage] = useState('');
   const [showReset, setShowReset] = useState(false);
 
+  const serverUrl = import.meta.env.VITE_APP_URL;
+
   useEffect(() => {
-    const newSocket = io('http://localhost:3000');
+    const newSocket = io(`${serverUrl}`);
     setSocket(newSocket);
 
     newSocket.on('loggedIn', () => {
