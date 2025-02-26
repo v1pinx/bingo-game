@@ -40,10 +40,10 @@ function App() {
     setSocket(newSocket);
 
     // Load and initialize audio
-    turnSoundRef.current = new Audio('/sounds/turn.mp3');
-    completeSoundRef.current = new Audio('/sounds/complete.mp3');
-    inviteSoundRef.current = new Audio('/sounds/invite.mp3');
-    winSoundRef.current = new Audio('/sounds/win.mp3');
+    turnSoundRef.current = new Audio('./../sounds/turn.mp3');
+    completeSoundRef.current = new Audio('./../sounds/complete.mp3');
+    inviteSoundRef.current = new Audio('./../sounds/invite.mp3');
+    winSoundRef.current = new Audio('./../sounds/win.mp3');
 
     newSocket.on('loggedIn', (data) => {
       toast.success('Logged in successfully!');
