@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
+import { FaGithub } from "react-icons/fa";
+import { RxExit } from "react-icons/rx";
+import toast from 'react-hot-toast';
+import OnlinePlayers from './components/OnlinePlayers';
 import './App.css';
 
 function App() {
@@ -12,6 +16,7 @@ function App() {
   const [matrix, setMatrix] = useState([[], []]);
   const [message, setMessage] = useState('');
   const [showReset, setShowReset] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   const serverUrl = import.meta.env.VITE_APP_URL;
 
@@ -20,6 +25,7 @@ function App() {
     setSocket(newSocket);
 
     newSocket.on('loggedIn', () => {
+      toast.success('Logged in successfully!');
       setIsLoggedIn(true);
     });
 
@@ -29,6 +35,7 @@ function App() {
       setMatrix(data.matrix);
       setMessage('Game started!');
       setShowReset(true);
+      setGameStarted(true);
     });
 
     newSocket.on('updateMatrix', (data) => {
@@ -39,6 +46,7 @@ function App() {
 
     newSocket.on('gameOver', (msg) => {
       setMessage(msg);
+      toast.success('Game over!');
       setShowReset(true);
     });
 
@@ -48,8 +56,10 @@ function App() {
     });
 
     newSocket.on('opponentLeft', (msg) => {
-      setMessage(msg);
-      setShowReset(true);
+      toast.success('Your opponent left the game! Game over!')
+      setTimeout(() => {
+        handleReset();
+      }, 2000);
     });
 
     return () => {
@@ -61,15 +71,21 @@ function App() {
     e.preventDefault();
     if (username) {
       socket.emit('login', username);
+    } else {
+      toast.error('Please enter your username')
     }
+
+    socket.on('loginFailed', (data) => {
+      toast.error(data.message);
+    });
   };
 
   const handleInvite = (e) => {
     e.preventDefault();
     if (inviteeUsername && inviteeUsername !== username) {
       socket.emit('invite', inviteeUsername);
-    } else {
-      setMessage('You cannot invite yourself!');
+    } else if (inviteeUsername === username) {
+      toast.error('You cannot invite yourself!');
     }
   };
 
@@ -85,15 +101,16 @@ function App() {
     setShowReset(false);
     setMessage('');
     setInviteeUsername('');
+    setGameStarted(false);
   };
 
   const renderMatrix = (matrix) => {
     return matrix.map((row, rowIndex) => (
-      <div key={rowIndex} className="matrix-row">
+      <div key={rowIndex} className="matrix-row flex flex-row">
         {row.map((cell, colIndex) => (
           <div
             key={colIndex}
-            className={`matrix-cell ${cell === 'X' ? 'crossed' : ''}`}
+            className={`bg-[#191A2E] border-[1.5px] text-3xl font-semibold border-gray-300  py-2 text-[#F9F9F9] w-20 h-20 flex items-center justify-center cursor-pointer hover:bg-[#191A2E]/80 transition-all duration-300 ${cell === 'X' ? 'crossed' : ''}`}
             onClick={() => handleNumberClick(rowIndex, colIndex)}
           >
             {cell}
@@ -104,52 +121,74 @@ function App() {
   };
 
   return (
-    <div className="app">
+    <div className="app bg-[#191A2E] relative flex flex-col items-center justify-center h-screen">
+      <OnlinePlayers />
+      {!gameStarted && (
+        <a className='absolute top-4 right-4 p-4' href='https://github.com/v1pinx/bingo-game' target='_blank' rel='noopener noreferrer'>
+          <FaGithub className='text-[#F9F9F9] text-3xl cursor-pointer hover:text-[#E94560] transition-all duration-300' />
+        </a>
+      )}
       {!isLoggedIn ? (
-        <div id="login">
-          <h1>Welcome to the 5x5 Grid Game</h1>
-          <input
-            type="text"
-            placeholder="Enter your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <button id="loginButton" onClick={handleLogin}>
-            Login
-          </button>
+        <div id="login" className='flex flex-col items-center justify-center h-screen space-y-4'>
+          <h1 className='text-[#F9F9F9] text-5xl font-bold'>Ultimate Bingo Adventure</h1>
+          <p className='text-gray-400 font-semibold text-md mt-[-10px]'>Play the ultimate bingo game with your friends</p>
+          <form onSubmit={handleLogin} className='w-full space-y-4 mt-[5px]'>
+            <input
+              type="text"
+              placeholder="Enter your username to login and see online players"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="border-[1.5px] border-gray-300 rounded-lg py-2 text-[#F9F9F9] w-full 
+            outline-none focus:ring-1 focus:ring-[#E94560] focus:ring-offset-1 px-3"
+            />
+            <button id="loginButton" type='submit' className='bg-[#E94560] text-white font-semibold p-2 rounded-lg w-full cursor-pointer hover:bg-[#E94560]/80 transition-all duration-300'>
+              Login
+            </button>
+          </form>
         </div>
       ) : (
         <>
-          {!showReset && (
-            <div id="invite">
-              <h2>Invite a Friend to Play</h2>
-              <input
-                type="text"
-                placeholder="Enter friend's username"
-                value={inviteeUsername}
-                onChange={(e) => setInviteeUsername(e.target.value.trim())}
-              />
-              <button id="inviteButton" onClick={handleInvite}>
-                Invite
-              </button>
+          {!gameStarted && (
+            <div id="invite" className='flex flex-col items-center justify-center space-y-4 h-screen'>
+              <h2 className='text-[#F9F9F9] text-5xl font-bold'>Invite a Friend</h2>
+              <p className='text-gray-400 font-semibold text-md mt-[-10px]'>Enter your friend's username to invite them to play</p>
+              <form onSubmit={handleInvite} className='w-full space-y-4 mt-[5px]'>
+
+                <input
+                  type="text"
+                  placeholder="Enter friend's username"
+                  value={inviteeUsername}
+                  onChange={(e) => setInviteeUsername(e.target.value.trim())}
+                  className='border-[1.5px] border-gray-300 rounded-lg py-2 text-[#F9F9F9] w-full 
+                outline-none focus:ring-1 focus:ring-[#E94560] focus:ring-offset-1 px-3'
+                />
+                <button id="inviteButton" type='submit' className='bg-[#E94560] text-white font-semibold p-2 rounded-lg w-full cursor-pointer hover:bg-[#E94560]/80 transition-all duration-300'>
+                  Invite
+                </button>
+              </form>
             </div>
           )}
 
-          <div id="game">
-            <h2>Your Game Board</h2>
-            <p>Click on a number to make your move</p>
-            <div id="matrix">{renderMatrix(matrix)}</div>
-          </div>
+          {gameStarted && (
+            <div id="game" className='flex flex-col items-center justify-center space-y-4'>
+              <div className='absolute top-4 right-4 p-4'>
+                <RxExit className='text-[#F9F9F9] text-3xl cursor-pointer hover:text-[#E94560] transition-all duration-300' />
+              </div>
+              <h2 className='text-[#F9F9F9] text-4xl font-bold'>Your Game Board</h2>
+              <p className='text-gray-400 font-semibold text-md'>Click on a box to make your move</p>
+              <div id="matrix">{renderMatrix(matrix)}</div>
+            </div>
+          )}
 
           {showReset && (
             <div id="controls">
-              <button id="resetButton" onClick={handleReset}>
+              <button id="resetButton" onClick={handleReset} className='bg-[#E94560] text-white font-semibold mt-4 p-2 rounded-lg w-full cursor-pointer hover:bg-[#E94560]/80 transition-all duration-300'>
                 Reset
               </button>
             </div>
           )}
 
-          <div id="message">{message}</div>
+          <div id="message" className='text-[#F9F9F9] text-2xl font-semibold'>{message}</div>
         </>
       )}
     </div>
